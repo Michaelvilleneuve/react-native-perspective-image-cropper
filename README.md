@@ -1,53 +1,92 @@
 
 # react-native-custom-crop
 
-## Getting started
+## Installation
 
 `$ npm install react-native-custom-crop --save`
 
-### Mostly automatic installation
-
 `$ react-native link react-native-custom-crop`
 
-### Manual installation
+## Crop image
 
+- First get component ref
+```javascript
+<CustomCrop ref={(ref) => this.customCrop = ref} />
+```
 
-#### iOS
+- Then call :
+```javascript
+this.customCrop.crop();
+```
 
-1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-custom-crop` and add `RNCustomCrop.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libRNCustomCrop.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
-4. Run your project (`Cmd+R`)<
+## Props
 
-#### Android
-
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.reactlibrary.RNCustomCropPackage;` to the imports at the top of the file
-  - Add `new RNCustomCropPackage()` to the list returned by the `getPackages()` method
-2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':react-native-custom-crop'
-  	project(':react-native-custom-crop').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-custom-crop/android')
-  	```
-3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
-      compile project(':react-native-custom-crop')
-  	```
-
-#### Windows
-[Read it! :D](https://github.com/ReactWindows/react-native)
-
-1. In Visual Studio add the `RNCustomCrop.sln` in `node_modules/react-native-custom-crop/windows/RNCustomCrop.sln` folder to their solution, reference from their app.
-2. Open up your `MainPage.cs` app
-  - Add `using Com.Reactlibrary.RNCustomCrop;` to the usings at the top of the file
-  - Add `new RNCustomCropPackage()` to the `List<IReactPackage>` returned by the `Packages` method
+| Props             | Type            | Required | Description                                                                                |
+|-------------------|-----------------|-----------------|---------------------------------------------------------------------------------------------|
+| `updateImage` | `Func`        | Yes | Returns the cropped image and the coordinates of the cropped image in the initial photo |
+| `rectangleCoordinates`            | `Object` see usage | No | Object to predefine an area to crop (an already detected image for example) |
+| `initialImage`            | `String` | Yes | Base64 encoded image you want to be cropped |
+| `height`            | `Number` | Yes | Height of the image (will probably disappear in the future |
+| `width`            | `Number` | Yes | Width of the image (will probably disappear in the future |
+| `overlayColor`            | `String` | No | Color of the cropping area overlay  |
+| `overlayStrokeColor`            | `String` | No | Color of the cropping area stroke  |
+| `overlayStrokeWidth`            | `Number` | No | Width of the cropping area stroke  |
+| `handlerColor`            | `String` | No | Width of the cropping area stroke  |
 
 
 ## Usage
-```javascript
-import RNCustomCrop from 'react-native-custom-crop';
 
-// TODO: What to do with the module?
-RNCustomCrop;
+```javascript
+import CustomCrop from 'react-native-custom-crop';
+
+class CropView extends Component {
+  componentWillMount() {
+    const image = 'base64ImageString';
+    Image.getSize(image, (width, height) => {
+      this.setState({
+        imageWidth: width,
+        imageHeight: height,
+        initialImage: image,
+        rectangleCoordinates: {
+          topLeft: { x: 10, y: 10 },
+          topRight: { x: 10, y: 10 },
+          bottomRight: { x: 10, y: 10 },
+          bottomLeft: { x: 10, y: 10 },
+        },
+      });
+    });
+  }
+
+  updateImage(image, newCoordinates) {
+    this.setState({
+      image,
+      rectangleCoordinates: newCoordinates
+    });
+  }
+
+  crop() {
+    this.customCrop.crop();
+  }
+
+  render() {
+    return (
+      <View>
+        <CustomCrop
+          updateImage={this.updateImage.bind(this)}
+          rectangleCoordinates={this.state.rectangleCoordinates}
+          initialImage={this.state.initialImage}
+          height={this.state.imageHeight}
+          width={this.state.imageWidth}
+          ref={(ref) => this.customCrop = ref}
+          overlayColor="rgba(18,190,210, 1)"
+          overlayStrokeColor="rgba(20,190,210, 1)"
+          handlerColor="rgba(20,150,160, 1)"
+        />
+        <TouchableOpacity onPress={this.crop.bind(this)}>
+          <Text>CROP IMAGE</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+}
 ```
-  
