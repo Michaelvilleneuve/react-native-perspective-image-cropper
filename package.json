@@ -1,0 +1,22 @@
+{
+  "name": "react-native-custom-crop",
+  "version": "1.0.0",
+  "description": "React native library allowing you to make custom crop and perspective corrections on photos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native"
+  ],
+  "author": "Michaël Villeneuve",
+  "license": "MIT",
+  "peerDependencies": {
+    "react-native-svg": "^5.4.1",
+    "react": "16.0.0-alpha.6",
+    "react-native": "0.44.3"
+  },
+  "dependencies": {
+    "react-native-svg": "^5.4.1"
+  }
+}
