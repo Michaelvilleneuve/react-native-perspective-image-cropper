@@ -1,11 +1,22 @@
 
-# react-native-custom-crop
+# React Native Custom Crop
+
+A component that allows you to perform custom crop and perspective correction !
+![Demo image](https://s3-eu-west-1.amazonaws.com/michaelvilleneuve/ezgif-3-d3058187b0.gif)
+
+Works marvelously well with https://github.com/Michaelvilleneuve/react-native-document-scanner
+
+![Demo gif](https://raw.githubusercontent.com/Michaelvilleneuve/react-native-document-scanner/master/images/demo.gif)
 
 ## Installation
 
 `$ npm install react-native-custom-crop --save`
 
 `$ react-native link react-native-custom-crop`
+
+This library uses react-native-svg, you must link its content too.
+
+`$ react-native link react-native-custom-crop/node_modules/react-native-svg`
 
 ## Crop image
 
@@ -31,7 +42,7 @@ this.customCrop.crop();
 | `overlayColor`            | `String` | No | Color of the cropping area overlay  |
 | `overlayStrokeColor`            | `String` | No | Color of the cropping area stroke  |
 | `overlayStrokeWidth`            | `Number` | No | Width of the cropping area stroke  |
-| `handlerColor`            | `String` | No | Width of the cropping area stroke  |
+| `handlerColor`            | `String` | No | Color of the handlers  |
 
 
 ## Usage
