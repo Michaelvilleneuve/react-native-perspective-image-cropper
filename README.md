@@ -20,7 +20,9 @@ This library uses react-native-svg, you must link its content too.
 
 `$ react-native link react-native-custom-crop/node_modules/react-native-svg`
 
-Download opencv2.framework from here https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/ and unzip it in `node_modules/react-native-custom-crop/ios`
+Download opencv2.framework from here https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/ and unzip it in your `ios` then in XCode, right click on project, choose `add files to yourproject` and select `opencv2.framework`
+
+![instructions](https://s3-eu-west-1.amazonaws.com/michaelvilleneuve/Capture+d%E2%80%99e%CC%81cran+2017-08-21+a%CC%80+10.13.35.png)
 
 ## Crop image
 
