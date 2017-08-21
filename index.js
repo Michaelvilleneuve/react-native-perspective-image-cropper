@@ -19,6 +19,7 @@ class CustomCrop extends Component {
       height: props.height,
       width: props.width,
       image: props.initialImage,
+      moving: false,
     };
 
     this.state = {
@@ -44,6 +45,10 @@ class CustomCrop extends Component {
           { x: Dimensions.get('window').width - 100, y: this.state.viewHeight - 100 }
         ),
     };
+    this.state = {
+      ...this.state,
+      overlayPositions: `${this.state.topLeft.x._value},${this.state.topLeft.y._value} ${this.state.topRight.x._value},${this.state.topRight.y._value} ${this.state.bottomRight.x._value},${this.state.bottomRight.y._value} ${this.state.bottomLeft.x._value},${this.state.bottomLeft.y._value}`
+    };
 
     this.panResponderTopLeft = this.createPanResponser(this.state.topLeft);
     this.panResponderTopRight = this.createPanResponser(this.state.topRight);
@@ -51,20 +56,19 @@ class CustomCrop extends Component {
     this.panResponderBottomRight = this.createPanResponser(this.state.bottomRight);
   }
 
+
   createPanResponser(corner) {
     return PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onPanResponderMove: () => {
-          Animated.event([null, {
-            dx: corner.x,
-            dy: corner.y
-          }])
-          this.setState({ moving: true });
+        onStartShouldSetPanResponder: () => {
+          return true
         },
+        onPanResponderMove: Animated.event([null, {
+          dx: corner.x,
+          dy: corner.y
+        }]),
         onPanResponderRelease: () => {
           corner.flattenOffset();
-          this.forceUpdate();
-          this.setState({ moving: false });
+          this.updateOverlayString();
         },
         onPanResponderGrant: () => {
           corner.setOffset({ x: corner.x._value, y: corner.y._value });
@@ -85,6 +89,12 @@ class CustomCrop extends Component {
       this.state.image,
       (err, res) => this.props.updateImage(res.image, coordinates)
     );
+  }
+
+  updateOverlayString() {
+    this.setState({
+      overlayPositions: `${this.state.topLeft.x._value},${this.state.topLeft.y._value} ${this.state.topRight.x._value},${this.state.topRight.y._value} ${this.state.bottomRight.x._value},${this.state.bottomRight.y._value} ${this.state.bottomLeft.x._value},${this.state.bottomLeft.y._value}`,
+    });
   }
 
   imageCoordinatesToViewCoordinates(corner) {
@@ -115,16 +125,14 @@ class CustomCrop extends Component {
             width={Dimensions.get('window').width}
             style={{ position: 'absolute', left: 0, top: 0 }}
           >
-            {!this.state.moving
-              <AnimatedPolygon
-                ref={(ref) => this.polygon = ref}
-                fill={this.props.overlayColor || 'blue'}
-                fillOpacity={this.props.overlayOpacity || 0.5}
-                stroke={this.props.overlayStrokeColor || 'blue'}
-                points={`${this.state.topLeft.x._value},${this.state.topLeft.y._value} ${this.state.topRight.x._value},${this.state.topRight.y._value} ${this.state.bottomRight.x._value},${this.state.bottomRight.y._value} ${this.state.bottomLeft.x._value},${this.state.bottomLeft.y._value}`}
-                strokeWidth={this.props.overlayStrokeWidth || 3}
-              />
-            }
+            <AnimatedPolygon
+              ref={(ref) => this.polygon = ref}
+              fill={this.props.overlayColor || 'blue'}
+              fillOpacity={this.props.overlayOpacity || 0.5}
+              stroke={this.props.overlayStrokeColor || 'blue'}
+              points={this.state.overlayPositions}
+              strokeWidth={this.props.overlayStrokeWidth || 3}
+            />
           </Svg>
           <Animated.View
             {...this.panResponderTopLeft.panHandlers}
