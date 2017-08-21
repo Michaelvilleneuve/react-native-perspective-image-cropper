@@ -1,6 +1,6 @@
 {
   "name": "react-native-custom-crop",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "React native library allowing you to make custom crop and perspective corrections on photos",
   "main": "index.js",
   "scripts": {
