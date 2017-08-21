@@ -1,5 +1,5 @@
 
-# React Native Custom Crop
+# React Native Custom Crop 📐🖼
 
 A component that allows you to perform custom crop and perspective correction !
 
@@ -10,7 +10,7 @@ https://github.com/Michaelvilleneuve/react-native-document-scanner
 
 ![Demo gif](https://raw.githubusercontent.com/Michaelvilleneuve/react-native-document-scanner/master/images/demo.gif)
 
-## Installation
+## Installation 🚀🚀
 
 `$ npm install react-native-custom-crop --save`
 
@@ -20,7 +20,7 @@ This library uses react-native-svg, you must link its content too.
 
 `$ react-native link react-native-custom-crop/node_modules/react-native-svg`
 
-Download opencv2.framework from here https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/ and unzip it in node_modules/react-native-custom-crop/ios
+Download opencv2.framework from here https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/ and unzip it in `node_modules/react-native-custom-crop/ios`
 
 ## Crop image
 
