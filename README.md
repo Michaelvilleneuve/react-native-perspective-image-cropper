@@ -1,5 +1,5 @@
 
-# React Native Custom Crop 📐🖼
+# React Native perspective image cropper 📐🖼
 
 A component that allows you to perform custom crop and perspective correction !
 
@@ -54,7 +54,7 @@ this.customCrop.crop();
 ## Usage
 
 ```javascript
-import CustomCrop from 'react-native-custom-crop';
+import CustomCrop from 'react-native-perspective-image-cropper';
 
 class CropView extends Component {
   componentWillMount() {
