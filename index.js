@@ -54,13 +54,17 @@ class CustomCrop extends Component {
   createPanResponser(corner) {
     return PanResponder.create({
         onStartShouldSetPanResponder: () => true,
-        onPanResponderMove: Animated.event([null, {
-          dx: corner.x,
-          dy: corner.y
-        }]),
+        onPanResponderMove: () => {
+          Animated.event([null, {
+            dx: corner.x,
+            dy: corner.y
+          }])
+          this.setState({ moving: true });
+        },
         onPanResponderRelease: () => {
           corner.flattenOffset();
           this.forceUpdate();
+          this.setState({ moving: false });
         },
         onPanResponderGrant: () => {
           corner.setOffset({ x: corner.x._value, y: corner.y._value });
@@ -111,14 +115,16 @@ class CustomCrop extends Component {
             width={Dimensions.get('window').width}
             style={{ position: 'absolute', left: 0, top: 0 }}
           >
-            <AnimatedPolygon
-              ref={(ref) => this.polygon = ref}
-              fill={this.props.overlayColor || 'blue'}
-              fillOpacity={this.props.overlayOpacity || 0.5}
-              stroke={this.props.overlayStrokeColor || 'blue'}
-              points={`${this.state.topLeft.x._value},${this.state.topLeft.y._value} ${this.state.topRight.x._value},${this.state.topRight.y._value} ${this.state.bottomRight.x._value},${this.state.bottomRight.y._value} ${this.state.bottomLeft.x._value},${this.state.bottomLeft.y._value}`}
-              strokeWidth={this.props.overlayStrokeWidth || 3}
-            />
+            {!this.state.moving
+              <AnimatedPolygon
+                ref={(ref) => this.polygon = ref}
+                fill={this.props.overlayColor || 'blue'}
+                fillOpacity={this.props.overlayOpacity || 0.5}
+                stroke={this.props.overlayStrokeColor || 'blue'}
+                points={`${this.state.topLeft.x._value},${this.state.topLeft.y._value} ${this.state.topRight.x._value},${this.state.topRight.y._value} ${this.state.bottomRight.x._value},${this.state.bottomRight.y._value} ${this.state.bottomLeft.x._value},${this.state.bottomLeft.y._value}`}
+                strokeWidth={this.props.overlayStrokeWidth || 3}
+              />
+            }
           </Svg>
           <Animated.View
             {...this.panResponderTopLeft.panHandlers}
