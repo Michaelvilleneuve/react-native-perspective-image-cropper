@@ -2,9 +2,11 @@
 # React Native Custom Crop
 
 A component that allows you to perform custom crop and perspective correction !
+
 ![Demo image](https://s3-eu-west-1.amazonaws.com/michaelvilleneuve/demo-crop.gif)
 
-Works marvelously well with https://github.com/Michaelvilleneuve/react-native-document-scanner
+##### Designed to work with React Native Document Scanner
+https://github.com/Michaelvilleneuve/react-native-document-scanner
 
 ![Demo gif](https://raw.githubusercontent.com/Michaelvilleneuve/react-native-document-scanner/master/images/demo.gif)
 
