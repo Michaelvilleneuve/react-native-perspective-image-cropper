@@ -16,9 +16,7 @@ https://github.com/Michaelvilleneuve/react-native-document-scanner
 
 `$ react-native link react-native-perspective-image-cropper`
 
-This library uses react-native-svg, you must link its content too.
-
-`$ react-native link react-native-perspective-image-cropper/node_modules/react-native-svg`
+This library uses react-native-svg, you must install it too. See https://github.com/react-native-community/react-native-svg for more infos.
 
 Download opencv2.framework from here https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/ and unzip it in your `ios` then in XCode, right click on project, choose `add files to yourproject` and select `opencv2.framework`
 
