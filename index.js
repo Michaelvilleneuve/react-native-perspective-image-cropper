@@ -126,7 +126,6 @@ class CustomCrop extends Component {
     } else {
       onMove.dy = point.y
     }
-    debugger
     return PanResponder.create({
         onStartShouldSetPanResponder: () => {
           return true
