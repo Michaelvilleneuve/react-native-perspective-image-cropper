@@ -9,6 +9,13 @@ import {
 } from 'react-native';
 import Svg, { Polygon } from 'react-native-svg';
 
+const DIRECTION = {
+  MIDDLE_LEFT: 'MIDDLE_LEFT',
+  MIDDLE_RIGHT: 'MIDDLE_RIGHT',
+  MIDDLE_TOP: 'MIDDLE_TOP',
+  MIDDLE_BOTTOM: 'MIDDLE_BOTTOM'
+}
+
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
 
 class CustomCrop extends Component {
@@ -20,6 +27,7 @@ class CustomCrop extends Component {
       width: props.width,
       image: props.initialImage,
       moving: false,
+      enablePanStrict: props.enablePanStrict || false
     };
 
     this.state = {
@@ -45,6 +53,7 @@ class CustomCrop extends Component {
           { x: Dimensions.get('window').width - 100, y: this.state.viewHeight - 100 }
         ),
     };
+    
     this.state = {
       ...this.state,
       overlayPositions: `${this.state.topLeft.x._value},${this.state.topLeft.y._value} ${this.state.topRight.x._value},${this.state.topRight.y._value} ${this.state.bottomRight.x._value},${this.state.bottomRight.y._value} ${this.state.bottomLeft.x._value},${this.state.bottomLeft.y._value}`
@@ -54,25 +63,84 @@ class CustomCrop extends Component {
     this.panResponderTopRight = this.createPanResponser(this.state.topRight);
     this.panResponderBottomLeft = this.createPanResponser(this.state.bottomLeft);
     this.panResponderBottomRight = this.createPanResponser(this.state.bottomRight);
+
+    if (this.state.enablePanStrict) {
+      this.state = {
+        ...this.state,
+        middleLeft: new Animated.ValueXY(
+          props.rectangleCoordinates ?
+            this.imageCoordinatesToViewCoordinates(
+              {
+                x: (props.rectangleCoordinates.topLeft.x + props.rectangleCoordinates.bottomLeft.x) / 2,
+                y: (props.rectangleCoordinates.topLeft.y + props.rectangleCoordinates.bottomLeft.y) / 2,
+              }
+              , true) :
+            { x: 100, y: this.state.viewHeight / 2 }
+          ),
+        middleRight: new Animated.ValueXY(
+          props.rectangleCoordinates ?
+            this.imageCoordinatesToViewCoordinates(
+              {
+                x: (props.rectangleCoordinates.topRight.x + props.rectangleCoordinates.bottomRight.x) / 2,
+                y: (props.rectangleCoordinates.topRight.y + props.rectangleCoordinates.bottomRight.y) / 2,
+              }
+              , true) :
+            { x: Dimensions.get('window').width - 100, y: this.state.viewHeight / 2 }
+          ),
+        middleTop: new Animated.ValueXY(
+          props.rectangleCoordinates ?
+            this.imageCoordinatesToViewCoordinates(
+              {
+                x: (props.rectangleCoordinates.topRight.x + props.rectangleCoordinates.topLeft.x) / 2,
+                y: (props.rectangleCoordinates.topRight.y + props.rectangleCoordinates.topLeft.y) / 2,
+              }
+              , true) :
+            { x: Dimensions.get('window').width / 2, y: 100 }
+          ),
+        middleBottom: new Animated.ValueXY(
+          props.rectangleCoordinates ?
+            this.imageCoordinatesToViewCoordinates(
+              {
+                x: (props.rectangleCoordinates.bottomRight.x + props.rectangleCoordinates.bottomLeft.x) / 2,
+                y: (props.rectangleCoordinates.bottomRight.y + props.rectangleCoordinates.bottomLeft.y) / 2,
+              }
+              , true) :
+            { x: Dimensions.get('window').width / 2, y: this.state.viewHeight - 100 }
+          ),
+      }
+      this.panResponderMiddleLeft = this.createPanResponser(this.state.middleLeft, DIRECTION.MIDDLE_LEFT);
+      this.panResponderMiddleRight = this.createPanResponser(this.state.middleRight, DIRECTION.MIDDLE_RIGHT);
+      this.panResponderMiddleTop = this.createPanResponser(this.state.middleTop, DIRECTION.MIDDLE_TOP);
+      this.panResponderMiddleBottom = this.createPanResponser(this.state.middleBottom, DIRECTION.MIDDLE_BOTTOM);
+    }
   }
 
 
-  createPanResponser(corner) {
+  createPanResponser(point, direction = 'point') {
+    const onMove = {}
+    if (direction === 'point') {
+      onMove.dx = point.x,
+      onMove.dy = point.y
+    } else if (direction === DIRECTION.MIDDLE_LEFT || direction === DIRECTION.MIDDLE_RIGHT) {
+      onMove.dx = point.x
+    } else {
+      onMove.dy = point.y
+    }
     return PanResponder.create({
         onStartShouldSetPanResponder: () => {
           return true
         },
-        onPanResponderMove: Animated.event([null, {
-          dx: corner.x,
-          dy: corner.y
-        }]),
+        onPanResponderMove: Animated.event([null, onMove]),
         onPanResponderRelease: () => {
-          corner.flattenOffset();
+          point.flattenOffset();
+          if (this.state.enablePanStrict) {
+            this.updatePoints(direction)
+          }
           this.updateOverlayString();
         },
         onPanResponderGrant: () => {
-          corner.setOffset({ x: corner.x._value, y: corner.y._value });
-          corner.setValue({ x: 0, y: 0 });
+          point.setOffset({ x: point.x._value, y: point.y._value });
+          point.setValue({ x: 0, y: 0 });
         }
     });
   }
@@ -89,6 +157,39 @@ class CustomCrop extends Component {
       this.state.image,
       (err, res) => this.props.updateImage(res.image, coordinates)
     );
+  }
+
+  updatePoints(direction) {
+    if (direction === DIRECTION.MIDDLE_LEFT) {
+      this.state.topLeft.setValue({ x: this.state.middleLeft.x._value, y: this.state.topLeft.y._value })
+      this.state.bottomLeft.setValue({ x: this.state.middleLeft.x._value, y: this.state.bottomLeft.y._value })
+    } else if (direction === DIRECTION.MIDDLE_RIGHT) {
+      this.state.topRight.setValue({ x: this.state.middleRight.x._value, y: this.state.topRight.y._value })
+      this.state.bottomRight.setValue({ x: this.state.middleRight.x._value, y: this.state.bottomRight.y._value })
+    } else if (direction === DIRECTION.MIDDLE_TOP) {
+      this.state.topLeft.setValue({ x: this.state.topLeft.x._value, y: this.state.middleTop.y._value })
+      this.state.topRight.setValue({ x: this.state.topRight.x._value, y: this.state.middleTop.y._value })
+    } else if (direction === DIRECTION.MIDDLE_BOTTOM) {
+      this.state.bottomLeft.setValue({ x: this.state.topLeft.x._value, y: this.state.middleBottom.y._value })
+      this.state.bottomRight.setValue({ x: this.state.topRight.x._value, y: this.state.middleBottom.y._value })
+    } else {
+      this.state.middleLeft.setValue({
+        x: (this.state.topLeft.x._value + this.state.bottomLeft.x._value) / 2,
+        y: (this.state.topLeft.y._value + this.state.bottomLeft.y._value) / 2,
+      })
+      this.state.middleRight.setValue({
+        x: (this.state.topRight.x._value + this.state.bottomRight.x._value) / 2,
+        y: (this.state.topRight.y._value + this.state.bottomRight.y._value) / 2,
+      })
+      this.state.middleTop.setValue({
+        x: (this.state.topLeft.x._value + this.state.topRight.x._value) / 2,
+        y: (this.state.topLeft.y._value + this.state.topRight.y._value) / 2,
+      })
+      this.state.middleBottom.setValue({
+        x: (this.state.bottomLeft.x._value + this.state.bottomRight.x._value) / 2,
+        y: (this.state.bottomLeft.y._value + this.state.bottomRight.y._value) / 2,
+      })
+    }
   }
 
   updateOverlayString() {
@@ -162,6 +263,30 @@ class CustomCrop extends Component {
             <View style={[s(this.props).handlerI, { left: 10, top: 10 }]} />
             <View style={[s(this.props).handlerRound, { right: 31, bottom: 31 }]} />
           </Animated.View>
+          {this.state.enablePanStrict && <Animated.View
+            {...this.panResponderMiddleLeft.panHandlers}
+            style={[this.state.middleLeft.getLayout(), s(this.props).handler]}
+          >
+            <View style={[s(this.props).handlerRectVertical]} />
+          </Animated.View>}
+          {this.state.enablePanStrict && <Animated.View
+            {...this.panResponderMiddleRight.panHandlers}
+            style={[this.state.middleRight.getLayout(), s(this.props).handler]}
+          >
+            <View style={[s(this.props).handlerRectVertical]} />
+          </Animated.View>}
+          {this.state.enablePanStrict && <Animated.View
+            {...this.panResponderMiddleTop.panHandlers}
+            style={[this.state.middleTop.getLayout(), s(this.props).handler]}
+          >
+            <View style={[s(this.props).handlerRectHorizontal]} />
+          </Animated.View>}
+          {this.state.enablePanStrict && <Animated.View
+            {...this.panResponderMiddleBottom.panHandlers}
+            style={[this.state.middleBottom.getLayout(), s(this.props).handler]}
+          >
+            <View style={[s(this.props).handlerRectHorizontal]} />
+          </Animated.View>}
         </View>
       </View>
     );
@@ -182,6 +307,18 @@ const s = (props) => {
       position: 'absolute',
       height: 39,
       borderRadius: 100,
+      backgroundColor: props.handlerColor || 'blue',
+    },
+    handlerRectHorizontal: {
+      width: 60,
+      position: 'absolute',
+      height: 30,
+      backgroundColor: props.handlerColor || 'blue',
+    },
+    handlerRectVertical: {
+      width: 30,
+      position: 'absolute',
+      height: 60,
       backgroundColor: props.handlerColor || 'blue',
     },
     image: {

@@ -47,6 +47,7 @@ this.customCrop.crop();
 | `overlayStrokeColor`            | `String` | No | Color of the cropping area stroke  |
 | `overlayStrokeWidth`            | `Number` | No | Width of the cropping area stroke  |
 | `handlerColor`            | `String` | No | Color of the handlers  |
+| `enablePanStrict`            | `Bool` | No | Enable pan on X axis, and Y axis  |
 
 
 ## Usage
@@ -96,6 +97,7 @@ class CropView extends Component {
           overlayColor="rgba(18,190,210, 1)"
           overlayStrokeColor="rgba(20,190,210, 1)"
           handlerColor="rgba(20,150,160, 1)"
+          enablePanStrict={false}
         />
         <TouchableOpacity onPress={this.crop.bind(this)}>
           <Text>CROP IMAGE</Text>
