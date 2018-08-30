@@ -58,7 +58,7 @@ import CustomCrop from 'react-native-perspective-image-cropper';
 class CropView extends Component {
   componentWillMount() {
     const image = 'base64ImageString';
-    Image.getSize(image, (width, height) => {
+    Image.getSize(`data:image/jpeg;base64,${image}`, (width, height) => {
       this.setState({
         imageWidth: width,
         imageHeight: height,
