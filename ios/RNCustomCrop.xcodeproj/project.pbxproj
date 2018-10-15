@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D2BCBB0F1F47841A001B66CF /* CustomCropManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = D2BCBB0E1F47841A001B66CF /* CustomCropManager.mm */; };
-		D2ED14E51F49D18A00BACABE /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2ED14E41F49D18A00BACABE /* opencv2.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,7 +26,6 @@
 		134814201AA4EA6300B7C361 /* libRNCustomCrop.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNCustomCrop.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2BCBB0D1F47841A001B66CF /* CustomCropManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCropManager.h; sourceTree = "<group>"; };
 		D2BCBB0E1F47841A001B66CF /* CustomCropManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomCropManager.mm; sourceTree = "<group>"; };
-		D2ED14E41F49D18A00BACABE /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,7 +33,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D2ED14E51F49D18A00BACABE /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +50,6 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				D2ED14E41F49D18A00BACABE /* opencv2.framework */,
 				D2BCBB0D1F47841A001B66CF /* CustomCropManager.h */,
 				D2BCBB0E1F47841A001B66CF /* CustomCropManager.mm */,
 				134814211AA4EA7D00B7C361 /* Products */,
@@ -202,7 +198,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)",
+					"$(SRCROOT)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -222,7 +218,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)",
+					"$(SRCROOT)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
