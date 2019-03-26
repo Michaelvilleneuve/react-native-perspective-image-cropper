@@ -1,12 +1,12 @@
+require 'json'
+
+package = JSON.parse(File.read(File.join(__dir__, '../package.json')))
 
 Pod::Spec.new do |s|
   s.name         = "RNCustomCrop"
-  s.version      = "1.0.0"
-  s.summary      = "RNCustomCrop"
-  s.description  = <<-DESC
-                  RNCustomCrop
-                   DESC
-  s.homepage     = ""
+  s.version     = package['version']
+  s.summary     = package['description']
+  s.homepage    = "https://github.com/Michaelvilleneuve/react-native-perspective-image-cropper"
   s.license      = "MIT"
   # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   s.author             = { "author" => "author@domain.cn" }
