@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNCustomCrop.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNCustomCrop.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2BCBB0D1F47841A001B66CF /* CustomCropManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCropManager.h; sourceTree = "<group>"; };
-		D2BCBB0E1F47841A001B66CF /* CustomCropManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomCropManager.mm; sourceTree = "<group>"; };
+		D2BCBB0E1F47841A001B66CF /* CustomCropManager.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = CustomCropManager.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,8 +197,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/../../../ios/",
 					"$(inherited)",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -217,8 +217,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/../../../ios/",
 					"$(inherited)",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
