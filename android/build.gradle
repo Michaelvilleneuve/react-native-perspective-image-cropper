@@ -31,6 +31,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(':openCVLibrary310')
     compile 'com.facebook.react:react-native:+'
 }
   
