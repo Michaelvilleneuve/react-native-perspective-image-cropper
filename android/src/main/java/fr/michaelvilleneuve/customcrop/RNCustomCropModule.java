@@ -63,7 +63,8 @@ public class RNCustomCropModule extends ReactContextBaseJavaModule {
     Point bl = new Point(points.getMap("bottomLeft").getDouble("x"), points.getMap("bottomLeft").getDouble("y"));
     Point br = new Point(points.getMap("bottomRight").getDouble("x"), points.getMap("bottomRight").getDouble("y"));
 
-    Mat src = Imgcodecs.imread(imageUri.replace("file://",""));
+    Mat src = Imgcodecs.imread(imageUri.replace("file://", ""), Imgproc.COLOR_BGR2RGB);
+    Imgproc.cvtColor(src, src, Imgproc.COLOR_BGR2RGB);
     double ratio = src.size().width / 500;
 
     double widthA = Math.sqrt(Math.pow(br.x - bl.x, 2) + Math.pow(br.y - bl.y, 2));
@@ -83,8 +84,8 @@ public class RNCustomCropModule extends ReactContextBaseJavaModule {
     Mat src_mat = new Mat(4, 1, CvType.CV_32FC2);
     Mat dst_mat = new Mat(4, 1, CvType.CV_32FC2);
 
-    src_mat.put(0, 0, tl.x * ratio, tl.y * ratio, tr.x * ratio, tr.y * ratio, br.x * ratio, br.y * ratio,
-            bl.x * ratio, bl.y * ratio);
+    src_mat.put(0, 0, tl.x * ratio, tl.y * ratio, tr.x * ratio, tr.y * ratio, br.x * ratio, br.y * ratio, bl.x * ratio,
+        bl.y * ratio);
     dst_mat.put(0, 0, 0.0, 0.0, dw, 0.0, dw, dh, 0.0, dh);
 
     Mat m = Imgproc.getPerspectiveTransform(src_mat, dst_mat);
