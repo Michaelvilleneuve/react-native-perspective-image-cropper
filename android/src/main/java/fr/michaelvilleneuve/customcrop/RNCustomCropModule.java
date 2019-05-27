@@ -65,7 +65,9 @@ public class RNCustomCropModule extends ReactContextBaseJavaModule {
 
     Mat src = Imgcodecs.imread(imageUri.replace("file://", ""), Imgproc.COLOR_BGR2RGB);
     Imgproc.cvtColor(src, src, Imgproc.COLOR_BGR2RGB);
-    double ratio = src.size().width / 500;
+
+    boolean ratioAlreadyApplied = tr.x * (src.size().width / 500) < src.size().width;
+    double ratio = ratioAlreadyApplied ? src.size().width / 500 : 1;
 
     double widthA = Math.sqrt(Math.pow(br.x - bl.x, 2) + Math.pow(br.y - bl.y, 2));
     double widthB = Math.sqrt(Math.pow(tr.x - tl.x, 2) + Math.pow(tr.y - tl.y, 2));
@@ -105,4 +107,5 @@ public class RNCustomCropModule extends ReactContextBaseJavaModule {
 
     m.release();
   }
+
 }
