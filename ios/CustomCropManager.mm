@@ -7,7 +7,8 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(crop:(NSDictionary *)points imageUri:(NSString *)imageUri callback:(RCTResponseSenderBlock)callback)
 {
-    NSURL *fileURL = [NSURL fileURLWithPath:imageUri];
+    NSString *parsedImageUri = [imageUri stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+    NSURL *fileURL = [NSURL fileURLWithPath:parsedImageUri];
     CIImage *ciImage = [CIImage imageWithContentsOfURL:fileURL];
     
     CGPoint newLeft = CGPointMake([points[@"topLeft"][@"x"] floatValue], [points[@"topLeft"][@"y"] floatValue]);
