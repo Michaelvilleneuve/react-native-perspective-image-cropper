@@ -159,7 +159,7 @@ class CustomCrop extends Component {
         return (
             <View
                 style={{
-                    flex: 1,
+                    height: this.state.viewHeight,
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                 }}
