@@ -87,13 +87,16 @@ class CustomCrop extends Component {
     createPanResponser(corner) {
         return PanResponder.create({
             onStartShouldSetPanResponder: () => true,
-            onPanResponderMove: Animated.event([
-                null,
-                {
-                    dx: corner.x,
-                    dy: corner.y,
-                },
-            ]),
+            onPanResponderMove: (evt, gestureState) => {
+                Animated.event([
+                    null,
+                    {
+                        dx: corner.x,
+                        dy: corner.y,
+                    },
+                ])(evt, gestureState);
+                this.updateOverlayString();
+            },
             onPanResponderRelease: () => {
                 corner.flattenOffset();
                 this.updateOverlayString();
@@ -128,14 +131,20 @@ class CustomCrop extends Component {
     }
 
     updateOverlayString() {
+        let topLeftx = this.state.topLeft.x._value + this.state.topLeft.x._offset;
+        let topLefty = this.state.topLeft.y._value + this.state.topLeft.y._offset;
+
+        let topRightx = this.state.topRight.x._value + this.state.topRight.x._offset;
+        let topRighty = this.state.topRight.y._value + this.state.topRight.y._offset;
+
+        let bottomRightx = this.state.bottomRight.x._value + this.state.bottomRight.x._offset;
+        let bottomRighty = this.state.bottomRight.y._value + this.state.bottomRight.y._offset;
+
+        let bottomLeftx = this.state.bottomLeft.x._value + this.state.bottomLeft.x._offset;
+        let bottomLefty = this.state.bottomLeft.y._value + this.state.bottomLeft.y._offset;
+
         this.setState({
-            overlayPositions: `${this.state.topLeft.x._value},${
-                this.state.topLeft.y._value
-            } ${this.state.topRight.x._value},${this.state.topRight.y._value} ${
-                this.state.bottomRight.x._value
-            },${this.state.bottomRight.y._value} ${
-                this.state.bottomLeft.x._value
-            },${this.state.bottomLeft.y._value}`,
+            overlayPositions: `${topLeftx},${topLefty} ${topRightx},${topRighty} ${bottomRightx},${bottomRighty} ${bottomLeftx},${bottomLefty}`,
         });
     }
 
