@@ -186,10 +186,10 @@ class CustomCrop extends Component {
                         <AnimatedPolygon
                             ref={(ref) => (this.polygon = ref)}
                             fill={this.props.overlayColor || 'blue'}
-                            fillOpacity={this.props.overlayOpacity || 0.5}
+                            fillOpacity={this.props.overlayOpacity != null ? this.props.overlayOpacity : 0.5}
                             stroke={this.props.overlayStrokeColor || 'blue'}
                             points={this.state.overlayPositions}
-                            strokeWidth={this.props.overlayStrokeWidth || 3}
+                            strokeWidth={this.props.overlayStrokeWidth != null ? this.props.overlayStrokeWidth : 3}
                         />
                     </Svg>
                     <Animated.View
