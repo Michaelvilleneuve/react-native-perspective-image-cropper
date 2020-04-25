@@ -211,6 +211,7 @@ class CustomCrop extends Component {
                                 { left: 31, top: 31 },
                             ]}
                         />
+                        <View style={{ position: 'absolute', backgroundColor: 'transparent', width: 200, height: 200, right: 29 + 31, bottom: 29 + 31 }} />
                     </Animated.View>
                     <Animated.View
                         {...this.panResponderTopRight.panHandlers}
@@ -231,6 +232,7 @@ class CustomCrop extends Component {
                                 { right: 31, top: 31 },
                             ]}
                         />
+                        <View style={{ position: 'absolute', backgroundColor: 'transparent', width: 200, height: 200, left: 29 + 31, bottom: 29 + 31 }} />
                     </Animated.View>
                     <Animated.View
                         {...this.panResponderBottomLeft.panHandlers}
@@ -251,6 +253,7 @@ class CustomCrop extends Component {
                                 { left: 31, bottom: 31 },
                             ]}
                         />
+                        <View style={{ position: 'absolute', backgroundColor: 'transparent', width: 200, height: 200, right: 29 + 31, top: 29 + 31 }} />
                     </Animated.View>
                     <Animated.View
                         {...this.panResponderBottomRight.panHandlers}
@@ -271,6 +274,7 @@ class CustomCrop extends Component {
                                 { right: 31, bottom: 31 },
                             ]}
                         />
+                        <View style={{ position: 'absolute', backgroundColor: 'transparent', width: 200, height: 200, left: 29 + 31, top: 29 + 31 }} />
                     </Animated.View>
                 </View>
             </View>
