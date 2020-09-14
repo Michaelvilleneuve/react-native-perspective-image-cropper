@@ -14,13 +14,9 @@ import org.opencv.core.Size;
  */
 public class ScannedDocument {
 
-    private static final String TAG = "l33t";
-
     public Mat original;
     public Mat processed;
     public Quadrilateral quadrilateral;
-    public Point[] previewPoints;
-    public Size previewSize;
     public Size originalSize;
 
     public Point[] originalPoints;
@@ -48,10 +44,9 @@ public class ScannedDocument {
 
         WritableMap rectangleCoordinates = new WritableNativeMap();
     
-        double ratio = this.originalSize.height / 500;
+        double ratio = this.originalSize.height / AppConstant.RESIZED_IMAGE_HEIGHT;
         double xRatio = ratio;
         double yRatio =  ratio;
-
 
         WritableMap topLeft = new WritableNativeMap();
         topLeft.putDouble("x", this.originalPoints[0].x * xRatio );
@@ -73,7 +68,6 @@ public class ScannedDocument {
         rectangleCoordinates.putMap("topRight", topRight);
         rectangleCoordinates.putMap("bottomRight", bottomRight);
         rectangleCoordinates.putMap("bottomLeft", bottomLeft);
-
 
         return rectangleCoordinates;
     }

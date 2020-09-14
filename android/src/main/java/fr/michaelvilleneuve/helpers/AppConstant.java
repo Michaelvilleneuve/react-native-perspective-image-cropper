@@ -5,6 +5,6 @@ import java.util.List;
 
 public class AppConstant {
 
-    // supported file formats
-    public static final List<String> FILE_EXTN = Arrays.asList("jpg", "jpeg", "png");
+    public static final List<String> FILE_EXTN = Arrays.asList("jpg", "jpeg", "png"); // supported file formats
+    public static final int RESIZED_IMAGE_HEIGHT = 500
 }
