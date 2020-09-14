@@ -35,16 +35,13 @@ public class ImageProcessor {
   private Point[] mPreviewPoints;
   private double colorGain = 1; // contrast
   private double colorBias = 10;
+  private int RESIZED_IMAGE_HEIGHT = 500
 
   public WritableMap processPicture(Mat img) {
-
-    Log.d(TAG, "processPicture - imported image " + img.size().width + "x" + img.size().height);
 
     ScannedDocument doc = detectDocument(img);
     doc.release();
     img.release();
-
-    Log.d(TAG, "Doc: " + doc.pointsAsHash());
 
     return doc.pointsAsHash();
   }
@@ -56,31 +53,18 @@ public class ImageProcessor {
         scannedDocuments.originalSize = img.size();
         Quadrilateral quad = getQuadrilateral(contours, scannedDocuments.originalSize);
 
-        double ratio = scannedDocuments.originalSize.height / 500;
-
+        double ratio = scannedDocuments.originalSize.height / RESIZED_IMAGE_HEIGHT;
         scannedDocuments.heightWithRatio = Double.valueOf(scannedDocuments.originalSize.width / ratio).intValue();
         scannedDocuments.widthWithRatio = Double.valueOf(scannedDocuments.originalSize.height / ratio).intValue();
 
         Mat doc;
         if (quad != null) {
             scannedDocuments.originalPoints = new Point[4];
-
-            // TopLeft
-            scannedDocuments.originalPoints[0] = new Point(quad.points[0].x,quad.points[0].y);
-
-            // TopRight
-            scannedDocuments.originalPoints[1] = new Point(quad.points[1].x,  quad.points[1].y);
-            
-            // BottomRight
-            scannedDocuments.originalPoints[2] = new Point( quad.points[2].x,  quad.points[2].y);
-
-            // BottomLeft
-            scannedDocuments.originalPoints[3] = new Point(quad.points[3].x,  quad.points[3].y);
-
+            scannedDocuments.originalPoints[0] = new Point(quad.points[0].x,quad.points[0].y); // TopLeft
+            scannedDocuments.originalPoints[1] = new Point(quad.points[1].x,  quad.points[1].y); // TopRight
+            scannedDocuments.originalPoints[2] = new Point( quad.points[2].x,  quad.points[2].y); // BottomRight
+            scannedDocuments.originalPoints[3] = new Point(quad.points[3].x,  quad.points[3].y); // BottomLeft
             scannedDocuments.quadrilateral = quad;
-            scannedDocuments.previewPoints = mPreviewPoints;
-            scannedDocuments.previewSize = mPreviewSize;
-
             doc = fourPointTransform(img, scannedDocuments.originalPoints);
         } else {
             doc = new Mat(img.size(), CvType.CV_8UC4);
@@ -91,7 +75,7 @@ public class ImageProcessor {
     }
 
     private Quadrilateral getQuadrilateral(ArrayList<MatOfPoint> contours, Size srcSize) {
-        double ratio = srcSize.height / 500;
+        double ratio = srcSize.height / RESIZED_IMAGE_HEIGHT;
         int height = Double.valueOf(srcSize.height / ratio).intValue();
         int width = Double.valueOf(srcSize.width / ratio).intValue();
         Size size = new Size(width, height);
@@ -101,18 +85,12 @@ public class ImageProcessor {
             double peri = Imgproc.arcLength(c2f, true);
             MatOfPoint2f approx = new MatOfPoint2f();
             Imgproc.approxPolyDP(c2f, approx, 0.02 * peri, true);
-
             Point[] points = approx.toArray();
-            // select biggest 4 angles polygon
-            // if (points.length == 4) {
-                Point[] foundPoints = sortPoints(points);
-
+            Point[] foundPoints = sortPoints(points);
             if (insideArea(foundPoints, size)) {
                 return new Quadrilateral(c, foundPoints);
             }
-          // }
         }
-
         return null;
   }
 
@@ -120,7 +98,6 @@ public class ImageProcessor {
       Imgproc.cvtColor(src, src, Imgproc.COLOR_RGBA2GRAY);
       src.convertTo(src, CvType.CV_8UC1, colorGain, colorBias);
   }
-
 
   private Point[] sortPoints(Point[] src) {
       ArrayList<Point> srcPoints = new ArrayList<>(Arrays.asList(src));
@@ -179,7 +156,7 @@ public class ImageProcessor {
     }
 
     private Mat fourPointTransform(Mat src, Point[] pts) {
-        double ratio = src.size().height / 500;
+        double ratio = src.size().height / RESIZED_IMAGE_HEIGHT;
         Point tl = pts[0];
         Point tr = pts[1];
         Point br = pts[2];
@@ -217,7 +194,7 @@ public class ImageProcessor {
         Mat cannedImage;
         Mat resizedImage;
 
-        double ratio = src.size().height / 500;
+        double ratio = src.size().height / RESIZED_IMAGE_HEIGHT;
         int height = Double.valueOf(src.size().height / ratio).intValue();
         int width = Double.valueOf(src.size().width / ratio).intValue();
         Size size = new Size(width, height);
