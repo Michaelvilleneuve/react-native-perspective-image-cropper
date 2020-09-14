@@ -9,6 +9,7 @@ import {
   Animated,
   ActivityIndicator,
 } from 'react-native'
+import PropTypes from 'prop-types'
 import Svg, { Polygon } from 'react-native-svg'
 
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon)
@@ -20,7 +21,7 @@ const LEFT = 3
 
 const HORIZONTAL_PADDING = 15
 
-class CustomCrop extends Component {
+class DocScanner extends Component {
   state = {}
   constructor(props) {
     super(props)
@@ -43,15 +44,15 @@ class CustomCrop extends Component {
     this.state = {
       imageWidth: props.width,
       imageHeight: props.height,
+      viewWidth: props.width,
+      viewHeight: props.height,
+      imageLayoutWidth: props.width,
+      imageLayoutHeight: props.height,
       image: props.initialImage,
       corners,
       midPoints,
       isLoading: true,
       zoom: 1,
-      viewWidth: props.width,
-      viewHeight: props.height,
-      imageLayoutWidth: props.width,
-      imageLayoutHeight: props.height,
     }
   }
   onLayout = (event) => {
@@ -123,7 +124,6 @@ class CustomCrop extends Component {
     this.updateMidPoints()
   }
   midPointPanResponser = (midPoint, side) => {
-    const { corners } = this.state
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (e, gesture) => {
@@ -151,13 +151,17 @@ class CustomCrop extends Component {
         this.setState({ overlayPositions: this.getOverlayString() })
       },
       onPanResponderRelease: () => {
-        corners.forEach((corner) => (corner.delta = { x: 0, y: 0 }))
+        this.setState((state) => ({
+          ...state,
+          corners: state.corners.map((corner) => ({ ...corner, delta: { x: 0, y: 0 } })),
+        }))
       },
       onPanResponderGrant: () => {},
     })
   }
   crop = () => {
     const { isLoading, image, imageHeight, imageWidth } = this.state
+    const { updateImage } = this.props
     if (!isLoading) {
       const { topLeft, topRight, bottomLeft, bottomRight } = this.getCorners()
       const coordinates = {
@@ -168,10 +172,9 @@ class CustomCrop extends Component {
         height: imageHeight,
         width: imageWidth,
       }
-
-      NativeModules.CustomCropManager.crop(coordinates, image, (err, res) => {
-        this.props.updateImage(res.image, coordinates)
-      })
+      NativeModules.CustomCropManager.crop(coordinates, image, (err, res) =>
+        updateImage(res.image, coordinates)
+      )
     }
   }
   findDocument = () => {
@@ -205,7 +208,6 @@ class CustomCrop extends Component {
   }
   getCorners = () => {
     const { corners } = this.state
-
     const topSorted = [...corners].sort((a, b) => a.position.y._value > b.position.y._value)
     const topLeft =
       topSorted[0].position.x._value < topSorted[1].position.x._value ? topSorted[0] : topSorted[1]
@@ -215,7 +217,6 @@ class CustomCrop extends Component {
       topSorted[2].position.x._value < topSorted[3].position.x._value ? topSorted[2] : topSorted[3]
     const bottomRight =
       topSorted[2].position.x._value >= topSorted[3].position.x._value ? topSorted[2] : topSorted[3]
-
     return { topLeft, topRight, bottomLeft, bottomRight }
   }
   setMidPoint = (point, start, end) => {
@@ -234,7 +235,10 @@ class CustomCrop extends Component {
   }
   getOverlayString = () => {
     const { topLeft, topRight, bottomLeft, bottomRight } = this.getCorners()
-    return `${topLeft.position.x._value},${topLeft.position.y._value} ${topRight.position.x._value},${topRight.position.y._value} ${bottomRight.position.x._value},${bottomRight.position.y._value} ${bottomLeft.position.x._value},${bottomLeft.position.y._value}`
+    return `${topLeft.position.x._value},${topLeft.position.y._value}
+            ${topRight.position.x._value},${topRight.position.y._value}
+            ${bottomRight.position.x._value},${bottomRight.position.y._value}
+            ${bottomLeft.position.x._value},${bottomLeft.position.y._value}`
   }
   offset = (position) => ({
     x: position.x._value + position.x._offset,
@@ -258,7 +262,13 @@ class CustomCrop extends Component {
       image,
       viewHeight,
     } = this.state
-    const { overlayColor, overlayStrokeWidth, overlayOpacity, overlayStrokeColor } = this.props
+    const {
+      overlayColor,
+      overlayStrokeWidth,
+      overlayOpacity,
+      overlayStrokeColor,
+      loadingIndicatorColor,
+    } = this.props
     return (
       <View style={{ flex: 1, width: '100%' }} onLayout={this.onLayout}>
         <Image style={{ flex: 1, width: '100%' }} resizeMode="cover" source={{ uri: image }} />
@@ -272,7 +282,7 @@ class CustomCrop extends Component {
               height: '100%',
             }}
           >
-            <ActivityIndicator color={overlayColor} size="large" />
+            <ActivityIndicator color={loadingIndicatorColor} size="large" />
           </View>
         )}
         {!isLoading && (
@@ -294,11 +304,11 @@ class CustomCrop extends Component {
                 ref={(ref) => {
                   this.polygon = ref
                 }}
-                fill={overlayColor || 'blue'}
-                fillOpacity={overlayOpacity || 0.5}
-                stroke={overlayStrokeColor || 'blue'}
+                fill={overlayColor}
+                fillOpacity={overlayOpacity}
+                stroke={overlayStrokeColor}
                 points={overlayPositions}
-                strokeWidth={overlayStrokeWidth || 3}
+                strokeWidth={overlayStrokeWidth}
               />
             </Svg>
 
@@ -340,8 +350,8 @@ const s = (props) => ({
     position: 'absolute',
     height: 20,
     borderRadius: 10,
-    backgroundColor: props.handlerBackroundColor || 'blue',
-    borderColor: props.borderColor || 'blue',
+    backgroundColor: props.handlerBackroundColor,
+    borderColor: props.handlerBorderColor,
     borderWidth: 2,
   },
   handleMidHorizontal: {
@@ -349,8 +359,8 @@ const s = (props) => ({
     position: 'absolute',
     height: 15,
     borderRadius: 10,
-    backgroundColor: props.handlerBackroundColor || 'blue',
-    borderColor: props.borderColor || 'blue',
+    backgroundColor: props.handlerBackroundColor,
+    borderColor: props.handlerBorderColor,
     borderWidth: 2,
   },
   handleMidVertical: {
@@ -358,8 +368,8 @@ const s = (props) => ({
     position: 'absolute',
     height: 40,
     borderRadius: 10,
-    backgroundColor: props.handlerBackroundColor || 'blue',
-    borderColor: props.borderColor || 'blue',
+    backgroundColor: props.handlerBackroundColor,
+    borderColor: props.handlerBorderColor,
     borderWidth: 2,
   },
   handler: {
@@ -375,4 +385,38 @@ const s = (props) => ({
   },
 })
 
-export default CustomCrop
+DocScanner.defaultProps = {
+  handlerBackroundColor: 'white',
+  handlerBorderColor: 'blue',
+  overlayColor: 'blue',
+  overlayStrokeWidth: 3,
+  overlayOpacity: 0.5,
+  overlayStrokeColor: 'blue',
+  loadingIndicatorColor: 'blue',
+  defaultFrameCoordinates: {
+    left: HORIZONTAL_PADDING,
+    right: HORIZONTAL_PADDING,
+    bottom: Dimensions.get('window').height - 100,
+    top: 100,
+  },
+}
+
+DocScanner.propTypes = {
+  handlerBackroundColor: PropTypes.string,
+  handlerBorderColor: PropTypes.string,
+  overlayColor: PropTypes.string,
+  overlayStrokeWidth: PropTypes.number,
+  overlayOpacity: PropTypes.number,
+  overlayStrokeColor: PropTypes.string,
+  loadingIndicatorColor: PropTypes.string,
+  updateImage: PropTypes.func,
+  defaultFrameCoordinates: PropTypes.shape({
+    left: PropTypes.number,
+    right: PropTypes.number,
+    bottom: PropTypes.number,
+    top: PropTypes.number,
+  }),
+  initialImage: PropTypes.string,
+}
+
+export default DocScanner

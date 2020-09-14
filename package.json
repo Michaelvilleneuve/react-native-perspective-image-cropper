@@ -34,6 +34,7 @@
     "prettier": "^2.1.1"
   },
   "dependencies": {
-    "eslint-config-prettier": "^6.11.0"
+    "eslint-config-prettier": "^6.11.0",
+    "prop-types": "^15.7.2"
   }
 }
