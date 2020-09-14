@@ -2,15 +2,7 @@
 
 Document in progress...
 
-A component that allows you to perform custom image crop and perspective correction !
-
-![Demo image](https://s3-eu-west-1.amazonaws.com/michaelvilleneuve/demo-crop.gif)
-
 ##### React Native Document Scanner
-
-https://github.com/Michaelvilleneuve/react-native-document-scanner
-
-![Demo gif](https://raw.githubusercontent.com/Michaelvilleneuve/react-native-document-scanner/master/images/demo.gif)
 
 ## Installation 🚀🚀
 
