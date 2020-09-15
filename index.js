@@ -43,7 +43,7 @@ class DocScanner extends Component {
     }
 
     this.state = {
-      image: props.initialImage,
+      imageUri: props.initialImage,
       corners,
       midPoints,
       isLoading: true,
@@ -51,9 +51,9 @@ class DocScanner extends Component {
     }
   }
   componentDidMount = async () => {
-    const { image } = this.state
-    if (image.length > 0) {
-      ImageSize.getSize(image.uri).then(({ height, width }) => {
+    const { imageUri } = this.state
+    if (imageUri) {
+      ImageSize.getSize(imageUri).then(({ height, width }) => {
         this.setState({
           imageWidth: width,
           imageHeight: height,
@@ -75,7 +75,6 @@ class DocScanner extends Component {
 
     const { defaultFrameCoordinates } = this.props
     const zoom = layout.height / imageHeight
-
     corners[0].position.setValue({
       x: defaultFrameCoordinates.left,
       y: defaultFrameCoordinates.top,
@@ -125,7 +124,8 @@ class DocScanner extends Component {
     })
   }
   moveCorner = (corner, dx, dy) => {
-    const { delta, position, imageLayoutWidth, imageLayoutHeight } = corner
+    const { imageLayoutWidth, imageLayoutHeight } = this.state
+    const { delta, position } = corner
     position.setValue({
       x: Math.min(Math.max(position.x._value + dx - delta.x, 0), imageLayoutWidth),
       y: Math.min(Math.max(position.y._value + dy - delta.y, 0), imageLayoutHeight),
@@ -170,7 +170,7 @@ class DocScanner extends Component {
     })
   }
   crop = () => {
-    const { isLoading, image, imageHeight, imageWidth } = this.state
+    const { isLoading, imageUri, imageHeight, imageWidth } = this.state
     const { updateImage } = this.props
     if (!isLoading) {
       const { topLeft, topRight, bottomLeft, bottomRight } = this.getCorners()
@@ -182,14 +182,15 @@ class DocScanner extends Component {
         height: imageHeight,
         width: imageWidth,
       }
-      NativeModules.CustomCropManager.crop(coordinates, image, (err, res) =>
+      NativeModules.CustomCropManager.crop(coordinates, imageUri, (err, res) =>
         updateImage(res.image, coordinates)
       )
     }
   }
   findDocument = () => {
-    const { corners, zoom, imageWidth, viewWidth, image } = this.state
-    NativeModules.CustomCropManager.findDocument(image, (err, res) => {
+    const { imageUri } = this.state
+    NativeModules.CustomCropManager.findDocument(imageUri, (err, res) => {
+      const { corners, zoom, imageWidth, viewWidth } = this.state
       if (res) {
         const offsetHorizontal = Math.round((imageWidth * zoom - viewWidth) / 2)
         corners[0].position.setValue({
@@ -210,10 +211,7 @@ class DocScanner extends Component {
         })
         this.updateMidPoints()
       }
-      this.setState({
-        isLoading: false,
-        overlayPositions: this.getOverlayString(),
-      })
+      this.setState({ isLoading: false, overlayPositions: this.getOverlayString() })
     })
   }
   getCorners = () => {
@@ -269,7 +267,7 @@ class DocScanner extends Component {
       midPoints,
       overlayPositions,
       isLoading,
-      image,
+      imageUri,
       viewHeight,
     } = this.state
     const {
@@ -281,7 +279,7 @@ class DocScanner extends Component {
     } = this.props
     return (
       <View style={{ flex: 1, width: '100%' }} onLayout={this.onLayout}>
-        <Image style={{ flex: 1, width: '100%' }} resizeMode="cover" source={{ uri: image }} />
+        <Image style={{ flex: 1, width: '100%' }} resizeMode="cover" source={{ uri: imageUri }} />
         {isLoading && (
           <View
             style={{
@@ -405,7 +403,7 @@ DocScanner.defaultProps = {
   loadingIndicatorColor: 'blue',
   defaultFrameCoordinates: {
     left: HORIZONTAL_PADDING,
-    right: HORIZONTAL_PADDING,
+    right: Dimensions.get('window').width - HORIZONTAL_PADDING,
     bottom: Dimensions.get('window').height - 100,
     top: 100,
   },
