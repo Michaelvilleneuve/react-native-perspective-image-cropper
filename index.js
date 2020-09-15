@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 import Svg, { Polygon } from 'react-native-svg'
+import ImageSize from 'react-native-image-size'
 
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon)
 
@@ -42,17 +43,26 @@ class DocScanner extends Component {
     }
 
     this.state = {
-      imageWidth: props.width,
-      imageHeight: props.height,
-      viewWidth: props.width,
-      viewHeight: props.height,
-      imageLayoutWidth: props.width,
-      imageLayoutHeight: props.height,
       image: props.initialImage,
       corners,
       midPoints,
       isLoading: true,
       zoom: 1,
+    }
+  }
+  componentDidMount = async () => {
+    const { image } = this.state
+    if (image.length > 0) {
+      ImageSize.getSize(image.uri).then(({ height, width }) => {
+        this.setState({
+          imageWidth: width,
+          imageHeight: height,
+          viewWidth: width,
+          viewHeight: height,
+          imageLayoutWidth: width,
+          imageLayoutHeight: height,
+        })
+      })
     }
   }
   onLayout = (event) => {
@@ -71,15 +81,15 @@ class DocScanner extends Component {
       y: defaultFrameCoordinates.top,
     })
     corners[1].position.setValue({
-      x: layout.width - defaultFrameCoordinates.right,
+      x: defaultFrameCoordinates.right,
       y: defaultFrameCoordinates.top,
     })
     corners[2].position.setValue({
-      x: HORIZONTAL_PADDING,
+      x: defaultFrameCoordinates.left,
       y: defaultFrameCoordinates.bottom,
     })
     corners[3].position.setValue({
-      x: layout.width - defaultFrameCoordinates.right,
+      x: defaultFrameCoordinates.right,
       y: defaultFrameCoordinates.bottom,
     })
 
