@@ -23,7 +23,9 @@ const LEFT = 3
 const HORIZONTAL_PADDING = 15
 
 class DocScanner extends Component {
-  state = {}
+  state = {
+    isLoading: true,
+  }
   constructor(props) {
     super(props)
 
@@ -279,7 +281,6 @@ class DocScanner extends Component {
     } = this.props
     return (
       <View style={{ flex: 1, width: '100%' }} onLayout={this.onLayout}>
-        <Image style={{ flex: 1, width: '100%' }} resizeMode="cover" source={{ uri: imageUri }} />
         {isLoading && (
           <View
             style={{
@@ -294,58 +295,65 @@ class DocScanner extends Component {
           </View>
         )}
         {!isLoading && (
-          <View
-            style={{
-              position: 'absolute',
-              top: offsetVerticle,
-              bottom: offsetVerticle,
-              left: offsetHorizontal,
-              right: offsetHorizontal,
-            }}
-          >
-            <Svg
-              height={viewHeight}
-              width={Dimensions.get('window').width}
-              style={{ position: 'absolute', left: 0, top: 0 }}
+          <>
+            <Image
+              style={{ flex: 1, width: '100%' }}
+              resizeMode="cover"
+              source={{ uri: imageUri }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                top: offsetVerticle,
+                bottom: offsetVerticle,
+                left: offsetHorizontal,
+                right: offsetHorizontal,
+              }}
             >
-              <AnimatedPolygon
-                ref={(ref) => {
-                  this.polygon = ref
-                }}
-                fill={overlayColor}
-                fillOpacity={overlayOpacity}
-                stroke={overlayStrokeColor}
-                points={overlayPositions}
-                strokeWidth={overlayStrokeWidth}
-              />
-            </Svg>
-
-            {midPoints.map((point, index) => (
-              <Animated.View
-                key={`point-${index}`}
-                {...point.panResponder.panHandlers}
-                style={[point.position.getLayout(), s(this.props).handler]}
+              <Svg
+                height={viewHeight}
+                width={Dimensions.get('window').width}
+                style={{ position: 'absolute', left: 0, top: 0 }}
               >
-                <View
-                  style={[
-                    index === TOP || index === BOTTOM
-                      ? s(this.props).handleMidHorizontal
-                      : s(this.props).handleMidVertical,
-                  ]}
+                <AnimatedPolygon
+                  ref={(ref) => {
+                    this.polygon = ref
+                  }}
+                  fill={overlayColor}
+                  fillOpacity={overlayOpacity}
+                  stroke={overlayStrokeColor}
+                  points={overlayPositions}
+                  strokeWidth={overlayStrokeWidth}
                 />
-              </Animated.View>
-            ))}
+              </Svg>
 
-            {corners.map((corner, index) => (
-              <Animated.View
-                key={`corner-${index}`}
-                {...corner.panResponder.panHandlers}
-                style={[corner.position.getLayout(), s(this.props).handler]}
-              >
-                <View style={[s(this.props).handlerRound]} />
-              </Animated.View>
-            ))}
-          </View>
+              {midPoints.map((point, index) => (
+                <Animated.View
+                  key={`point-${index}`}
+                  {...point.panResponder.panHandlers}
+                  style={[point.position.getLayout(), s(this.props).handler]}
+                >
+                  <View
+                    style={[
+                      index === TOP || index === BOTTOM
+                        ? s(this.props).handleMidHorizontal
+                        : s(this.props).handleMidVertical,
+                    ]}
+                  />
+                </Animated.View>
+              ))}
+
+              {corners.map((corner, index) => (
+                <Animated.View
+                  key={`corner-${index}`}
+                  {...corner.panResponder.panHandlers}
+                  style={[corner.position.getLayout(), s(this.props).handler]}
+                >
+                  <View style={[s(this.props).handlerRound]} />
+                </Animated.View>
+              ))}
+            </View>
+          </>
         )}
       </View>
     )
