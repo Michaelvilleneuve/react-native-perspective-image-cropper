@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 import Svg, { Polygon } from 'react-native-svg'
-import ImageSize from 'react-native-image-size'
+import * as ImageSize from 'react-native-image-size'
 
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon)
 
