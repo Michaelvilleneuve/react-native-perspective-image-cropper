@@ -10,7 +10,7 @@ Document in progress...
 
 `$ react-native link react-native-perspective-image-cropper`
 
-This library uses react-native-svg, you must install it too. See https://github.com/react-native-community/react-native-svg for more infos.
+This library uses react-native-svg and react-native-image-size, you must install them too. See https://github.com/react-native-community/react-native-svg and https://github.com/eXist-FraGGer/react-native-image-size for more infos.
 
 #### Android Only
 
