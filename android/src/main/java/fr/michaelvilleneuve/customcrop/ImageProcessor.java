@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import fr.michaelvilleneuve.helpers.AppConstant;
 import fr.michaelvilleneuve.helpers.Quadrilateral;
 import fr.michaelvilleneuve.helpers.ScannedDocument;
 import fr.michaelvilleneuve.helpers.Utils;
