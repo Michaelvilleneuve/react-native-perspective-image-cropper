@@ -177,7 +177,6 @@ class DocScanner extends Component {
     const { updateImage } = this.props
     if (!isLoading) {
       const { topLeft, topRight, bottomLeft, bottomRight } = this.getCorners()
-      console.log('old', topLeft, topRight, bottomLeft, bottomRight)
       const coordinates = {
         topLeft: this.viewCoordinatesToImageCoordinates(topLeft),
         topRight: this.viewCoordinatesToImageCoordinates(topRight),
@@ -186,7 +185,6 @@ class DocScanner extends Component {
         height: imageHeight,
         width: imageWidth,
       }
-      console.log('new', coordinates)
       NativeModules.CustomCropManager.crop(coordinates, imageUri, (err, res) =>
         updateImage(res.image, coordinates)
       )
