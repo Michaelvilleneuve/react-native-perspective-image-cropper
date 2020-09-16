@@ -8,6 +8,7 @@ import {
   View,
   Animated,
   ActivityIndicator,
+  Platform,
 } from 'react-native'
 import PropTypes from 'prop-types'
 import Svg, { Polygon } from 'react-native-svg'
@@ -176,6 +177,7 @@ class DocScanner extends Component {
     const { updateImage } = this.props
     if (!isLoading) {
       const { topLeft, topRight, bottomLeft, bottomRight } = this.getCorners()
+      console.log('old', topLeft, topRight, bottomLeft, bottomRight)
       const coordinates = {
         topLeft: this.viewCoordinatesToImageCoordinates(topLeft),
         topRight: this.viewCoordinatesToImageCoordinates(topRight),
@@ -184,6 +186,7 @@ class DocScanner extends Component {
         height: imageHeight,
         width: imageWidth,
       }
+      console.log('new', coordinates)
       NativeModules.CustomCropManager.crop(coordinates, imageUri, (err, res) =>
         updateImage(res.image, coordinates)
       )
@@ -213,7 +216,7 @@ class DocScanner extends Component {
         })
         this.updateMidPoints()
       }
-      this.setState({ isLoading: false, overlayPositions: this.getOverlayString() })
+      this.setState({ isLoading: false, overlayPositions: this.getOverlayString(), corners })
     })
   }
   getCorners = () => {
@@ -255,10 +258,12 @@ class DocScanner extends Component {
     y: position.y._value + position.y._offset,
   })
   viewCoordinatesToImageCoordinates = (corner) => {
-    const { zoom } = this.state
+    const { zoom, imageWidth } = this.state
+    const offsetHorizontal =
+      Platform.OS === 'android' ? Math.round(imageWidth * zoom - corner.position.x._value) : 0
     return {
-      x: corner.position.x._value * (1 / zoom),
-      y: corner.position.y._value * (1 / zoom),
+      x: corner.position.x._value / zoom + offsetHorizontal,
+      y: corner.position.y._value / zoom,
     }
   }
   render() {
@@ -281,6 +286,7 @@ class DocScanner extends Component {
     } = this.props
     return (
       <View style={{ flex: 1, width: '100%' }} onLayout={this.onLayout}>
+        <Image style={{ flex: 1, width: '100%' }} resizeMode="cover" source={{ uri: imageUri }} />
         {isLoading && (
           <View
             style={{
@@ -296,11 +302,6 @@ class DocScanner extends Component {
         )}
         {!isLoading && (
           <>
-            <Image
-              style={{ flex: 1, width: '100%' }}
-              resizeMode="cover"
-              source={{ uri: imageUri }}
-            />
             <View
               style={{
                 position: 'absolute',
