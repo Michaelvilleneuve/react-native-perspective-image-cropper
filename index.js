@@ -59,7 +59,7 @@ class DocScanner extends Component {
       ImageSize.getSize(imageUri).then(({ height, width }) => {
         let newWidth = width
         let newHeight = height
-        if (height <= width && IS_ANDROID) {
+        if (height <= width && Platform.OS === 'android') {
           newWidth = height
           newHeight = width
         }
@@ -262,7 +262,7 @@ class DocScanner extends Component {
     y: position.y._value + position.y._offset,
   })
   viewCoordinatesToImageCoordinates = (corner) => {
-    const { zoom, imageWidth } = this.state
+    const { zoom, imageWidth, viewWidth } = this.state
     const offsetHorizontal =
       Platform.OS === 'android' ? Math.round((imageWidth * zoom - viewWidth) / (zoom * 2)) : 0
     return {
