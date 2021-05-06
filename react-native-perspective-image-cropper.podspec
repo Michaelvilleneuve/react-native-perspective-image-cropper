@@ -13,5 +13,6 @@ Pod::Spec.new do |s|
   s.source        = { :git => "#{s.homepage}", :tag => "v#{s.version}" }
   s.source_files  = "ios/**/*.{h,m,mm}"
   s.requires_arc  = true
+  s.dependency 'React-Core'
   s.dependency 'React'
 end
