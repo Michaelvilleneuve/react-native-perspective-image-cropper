@@ -7,9 +7,17 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(crop:(NSDictionary *)points imageUri:(NSString *)imageUri callback:(RCTResponseSenderBlock)callback)
 {
-    NSString *parsedImageUri = [imageUri stringByReplacingOccurrencesOfString:@"file://" withString:@""];
-    NSURL *fileURL = [NSURL fileURLWithPath:parsedImageUri];
-    CIImage *ciImage = [CIImage imageWithContentsOfURL:fileURL];
+    CIImage *ciImage;
+    if ([imageUri containsString:@"data:image/png;base64,"]) {
+        NSString *parsedImageUri = [imageUri stringByReplacingOccurrencesOfString:@"data:image/png;base64," withString:@""];
+        NSData *imageData = [[NSData alloc] initWithBase64EncodedString:parsedImageUri options:NSDataBase64DecodingIgnoreUnknownCharacters];
+        UIImage *uiImage = [[UIImage alloc] initWithData:imageData];
+        ciImage = [[CIImage alloc] initWithImage:uiImage];
+    } else {
+        NSString *parsedImageUri = [imageUri stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+        NSURL *fileURL = [NSURL fileURLWithPath:parsedImageUri];
+        ciImage = [CIImage imageWithContentsOfURL:fileURL];
+    }
     
     CGPoint newLeft = CGPointMake([points[@"topLeft"][@"x"] floatValue], [points[@"topLeft"][@"y"] floatValue]);
     CGPoint newRight = CGPointMake([points[@"topRight"][@"x"] floatValue], [points[@"topRight"][@"y"] floatValue]);
@@ -36,8 +44,18 @@ RCT_EXPORT_METHOD(crop:(NSDictionary *)points imageUri:(NSString *)imageUri call
     CGImageRef cgimage = [context createCGImage:ciImage fromRect:[ciImage extent]];
     UIImage *image = [UIImage imageWithCGImage:cgimage];
     
-    NSData *imageToEncode = UIImageJPEGRepresentation(image, 0.8);
-    callback(@[[NSNull null], @{@"image": [imageToEncode base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength]}]);
+    NSData *imageToEncode = UIImageJPEGRepresentation(image, 0.5);
+    
+    if ([imageUri containsString:@"data:image/png;base64,"]) {
+        NSString *base64Image = [imageToEncode base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        callback(@[[NSNull null], @{@"image": base64Image}]);
+    } else {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsPath = [paths objectAtIndex:0];
+        NSString *filePath = [documentsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",[[NSUUID UUID] UUIDString]]];
+        [imageToEncode writeToFile:filePath atomically:YES];
+        callback(@[[NSNull null], @{@"image": filePath}]);
+    }
 }
 
 - (CGPoint)cartesianForPoint:(CGPoint)point height:(float)height {
