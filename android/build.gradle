@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    implementation project(':openCVLibrary310')
+    implementation 'com.quickbirdstudios:opencv:4.3.0'
     implementation 'com.facebook.react:react-native:+'
 }
   
