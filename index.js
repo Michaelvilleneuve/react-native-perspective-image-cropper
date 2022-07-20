@@ -150,7 +150,7 @@ class CustomCrop extends Component {
     viewCoordinatesToImageCoordinates(corner) {
         const computedWidth = this.state.viewHeight / this.state.aspectRatio;
         return {
-            x:  (corner.x._value - ((Dimensions.get('window').width - computedWidth)/2)) * this.state.width / computedWidth, // ANDROID
+            x:  (corner.x._value - ((Dimensions.get('window').width - computedWidth)/2)) * this.state.width / computedWidth,
             y:  (corner.y._value / this.state.viewHeight) * this.state.height
         };
     }
