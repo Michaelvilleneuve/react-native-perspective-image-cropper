@@ -15,12 +15,12 @@ class CustomCrop extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            viewHeight:
-                Dimensions.get('window').width * (props.height / props.width),
+            viewHeight: props.layoutHeight,
             height: props.height,
             width: props.width,
             image: props.initialImage,
             moving: false,
+            aspectRatio: props.height / props.width
         };
 
         this.state = {
@@ -140,18 +140,18 @@ class CustomCrop extends Component {
     }
 
     imageCoordinatesToViewCoordinates(corner) {
+        const computedWidth = this.state.viewHeight / this.state.aspectRatio;
         return {
-            x: (corner.x * Dimensions.get('window').width) / this.state.width,
+            x: (corner.x * computedWidth) / this.state.width + (Dimensions.get('window').width - computedWidth)/2,
             y: (corner.y * this.state.viewHeight) / this.state.height,
         };
     }
 
     viewCoordinatesToImageCoordinates(corner) {
+        const computedWidth = this.state.viewHeight / this.state.aspectRatio;
         return {
-            x:
-                (corner.x._value / Dimensions.get('window').width) *
-                this.state.width,
-            y: (corner.y._value / this.state.viewHeight) * this.state.height,
+            x:  (corner.x._value - ((Dimensions.get('window').width - computedWidth)/2)) * this.state.width / computedWidth,
+            y:  (corner.y._value / this.state.viewHeight) * this.state.height
         };
     }
 
