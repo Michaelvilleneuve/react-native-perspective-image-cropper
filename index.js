@@ -15,12 +15,13 @@ class CustomCrop extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            viewHeight:
-                Dimensions.get('window').width * (props.height / props.width),
+            viewHeight: props.layoutHeight,
             height: props.height,
             width: props.width,
             image: props.initialImage,
             moving: false,
+            aspectRatio: props.height / props.width,
+            computedWidth: props.layoutHeight / (props.height / props.width)
         };
 
         this.state = {
@@ -141,17 +142,15 @@ class CustomCrop extends Component {
 
     imageCoordinatesToViewCoordinates(corner) {
         return {
-            x: (corner.x * Dimensions.get('window').width) / this.state.width,
+            x: (corner.x * this.state.computedWidth) / this.state.width + (Dimensions.get('window').width - this.state.computedWidth)/2,
             y: (corner.y * this.state.viewHeight) / this.state.height,
         };
     }
 
     viewCoordinatesToImageCoordinates(corner) {
         return {
-            x:
-                (corner.x._value / Dimensions.get('window').width) *
-                this.state.width,
-            y: (corner.y._value / this.state.viewHeight) * this.state.height,
+            x:  (corner.x._value - ((Dimensions.get('window').width - this.state.computedWidth)/2)) * this.state.width / this.state.computedWidth,
+            y:  (corner.y._value / this.state.viewHeight) * this.state.height
         };
     }
 
@@ -175,7 +174,7 @@ class CustomCrop extends Component {
                             s(this.props).image,
                             { height: this.state.viewHeight },
                         ]}
-                        resizeMode="contain"
+                        resizeMode={ this.state.computedWidth < Dimensions.get('window').width ? "contain" : undefined}
                         source={{ uri: this.state.image }}
                     />
                     <Svg
